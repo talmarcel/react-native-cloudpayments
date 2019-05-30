@@ -1,7 +1,12 @@
 #import "RNCloudPayments.h"
 #import "SDK/Card.m"
 
+@interface RNCloudPayments () {
+    @property (nonatomic) RCTPromiseResolveBlock resolveWebView;
+}
+
 @implementation RNCloudPayments
+
 
 RCT_EXPORT_MODULE();
 
@@ -62,10 +67,20 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
     SDWebViewController *webViewController = [[SDWebViewController alloc] initWithURL:url transactionId:transactionId token:token];
     webViewController.m_delegate = self;
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:webViewController];
+    [navigationController.navigationBar setTranslucent:false];
     [[[[[UIApplication sharedApplication] delegate] window] rootViewController] presentViewController:navigationController animated:YES completion:NULL];
 }
 
 #pragma MARK: - SDWebViewDelegate
+
+- (void)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (UIWebViewNavigationType)navigationType {
+    
+    // Detect url
+    NSString *url = request.URL;
+    NSString *sringUrl = request.URL.absoluteString;
+    
+    
+}
 
 - (void)onWebViewWillClose:(UIWebView *)webView {
     

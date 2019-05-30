@@ -10,7 +10,7 @@
 #define IBT_ADDRESS_TEXT_COLOR  [UIColor colorWithRed:.44 green:.45  blue:.46  alpha:1]
 #define IBT_PROGRESS_COLOR      [UIColor colorWithRed:0   green:.071 blue:.75  alpha:1]
 
-#define POST_BACK_URL "https://demo.cloudpayments.ru/WebFormPost/GetWebViewData"
+#define POST_BACK_URL @"https://demo.cloudpayments.ru/WebFormPost/GetWebViewData"
 
 #import "SDWebViewController.h"
 #import "SDWebViewDelegate.h"
@@ -88,8 +88,7 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)dealloc
-{
+- (void)dealloc {
     [self.m_webView stopLoading];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     self.m_webView.delegate = nil;
@@ -120,8 +119,7 @@
 - (NSString *)getAddressBarHostText:(NSURL *)url {
     if ([url.host length] > 0) {
         return [NSString stringWithFormat:NSLocalizedString(@"Provided by %@", nil), url.host];
-    }
-    else {
+    } else {
         return @"";
     }
 }
@@ -177,15 +175,14 @@
 - (BOOL)isTopLevelNavigation:(NSURLRequest *)req {
     if (req.mainDocumentURL) {
         return [req.URL isEqual:req.mainDocumentURL];
-    }
-    else {
+    } else {
         return YES;
     }
 }
 
 - (void)loadURL:(NSString *)url transactionId:(NSString *)transactionId token:(NSString *)token {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    NSString *post = [NSString stringWithFormat:@"MD=%@&PaReq=%@&TermUrl=%s", transactionId, token, POST_BACK_URL];
+    NSString *post = [NSString stringWithFormat:@"MD=%@&PaReq=%@&TermUrl=%@", transactionId, token, POST_BACK_URL];
     NSData *postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:postData];
@@ -195,10 +192,12 @@
 
 #pragma MARK: - UIWebViewDelegate
 
-- (BOOL)webView:(UIWebView *)webView
-shouldStartLoadWithRequest:(NSURLRequest *)request
- navigationType:(UIWebViewNavigationType)navigationType
-{
+- (BOOL)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType:(UIWebViewNavigationType)navigationType {
+    
+    if ([_m_delegate respondsToSelector:@selector(webView:shouldStartLoadWithRequest:navigationType:)]) {
+        [_m_delegate webView:webView shouldStartLoadWithRequest:request navigationType:navigationType];
+    }
+    
     m_currentUrl = request.mainDocumentURL;
     m_addressLabel.text = [self getAddressBarHostText:m_currentUrl];
     
@@ -206,6 +205,8 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
 }
 
 - (void)webViewDidStartLoad:(UIWebView *)webView {
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
+    
     if ([_m_delegate respondsToSelector:@selector(onWebViewDidStartLoad:)]) {
         [_m_delegate onWebViewDidStartLoad:webView];
     }
@@ -213,11 +214,11 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     if ([self isTopLevelNavigation:webView.request]) {
         [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
     }
-    
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:YES];
 }
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView {
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+    
     if ([_m_delegate respondsToSelector:@selector(onWebViewDidFinishLoad:)]) {
         [_m_delegate onWebViewDidFinishLoad:webView];
     }
@@ -226,17 +227,16 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
         m_currentUrl = webView.request.mainDocumentURL;
         m_addressLabel.text = [self getAddressBarHostText:m_currentUrl];
         
-        // get title
         if (m_bAutoSetTitle) {
             NSString *nsTitle = [webView stringByEvaluatingJavaScriptFromString:@"document.title"];
             [self updateDisplayTitle:nsTitle];
         }
     }
-    
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 }
 
 - (void)webView:(UIWebView *)webView didFailLoadWithError:(NSError *)error {
+    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
+    
     if ([_m_delegate respondsToSelector:@selector(webViewFailToLoad:)]) {
         [_m_delegate webViewFailToLoad:error];
     }
@@ -245,7 +245,6 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
         [self isTopLevelNavigation:webView.request]) {
         
     }
-    [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 }
 
 @end
