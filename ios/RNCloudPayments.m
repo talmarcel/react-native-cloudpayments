@@ -6,12 +6,21 @@
 RCT_EXPORT_MODULE();
 
 RCT_EXPORT_METHOD(isValidNumber: (NSString *)cardNumber
-                  cardExp: (NSString *)cardExp
-                  cardCvv: (NSString *)cardCvv
                   resolve: (RCTPromiseResolveBlock)resolve
                   reject: (RCTPromiseRejectBlock)reject)
 {
     if([Card isCardNumberValid: cardNumber]) {
+        resolve(@YES);
+    } else {
+        resolve(@NO);
+    }
+};
+
+RCT_EXPORT_METHOD(isValidExpired: (NSString *)cardExp
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  reject: (RCTPromiseRejectBlock)reject)
+{
+    if([Card isExpiredValid: cardExp]) {
         resolve(@YES);
     } else {
         resolve(@NO);
