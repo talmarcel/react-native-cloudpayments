@@ -10,6 +10,7 @@
 		954FC90C20AADA700017B273 /* RNCloudPayments.m in Sources */ = {isa = PBXBuildFile; fileRef = 954FC90B20AADA700017B273 /* RNCloudPayments.m */; };
 		954FC9F920AC08E60017B273 /* Card.m in Sources */ = {isa = PBXBuildFile; fileRef = 954FC9F620AC08E60017B273 /* Card.m */; };
 		954FC9FA20AC08E60017B273 /* NSDataENBase64.m in Sources */ = {isa = PBXBuildFile; fileRef = 954FC9F720AC08E60017B273 /* NSDataENBase64.m */; };
+		AE8EA39622A015910033E067 /* SDWebViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = AE8EA39522A015910033E067 /* SDWebViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -32,6 +33,9 @@
 		954FC9F620AC08E60017B273 /* Card.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Card.m; sourceTree = "<group>"; };
 		954FC9F720AC08E60017B273 /* NSDataENBase64.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDataENBase64.m; sourceTree = "<group>"; };
 		954FC9F820AC08E60017B273 /* Card.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Card.h; sourceTree = "<group>"; };
+		AE8EA39322A015910033E067 /* SDWebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDWebViewController.h; sourceTree = "<group>"; };
+		AE8EA39422A015910033E067 /* SDWebViewDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SDWebViewDelegate.h; sourceTree = "<group>"; };
+		AE8EA39522A015910033E067 /* SDWebViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SDWebViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -48,10 +52,11 @@
 		954FC8FE20AADA700017B273 = {
 			isa = PBXGroup;
 			children = (
-				954FC9F420AC08D70017B273 /* SDK */,
-				954FC90B20AADA700017B273 /* RNCloudPayments.m */,
-				954FC90A20AADA700017B273 /* RNCloudPayments.h */,
 				954FC90820AADA700017B273 /* Products */,
+				954FC90A20AADA700017B273 /* RNCloudPayments.h */,
+				954FC90B20AADA700017B273 /* RNCloudPayments.m */,
+				954FC9F420AC08D70017B273 /* SDK */,
+				AE8EA39222A015910033E067 /* SDWebViewController */,
 			);
 			sourceTree = "<group>";
 		};
@@ -72,6 +77,16 @@
 				954FC9F720AC08E60017B273 /* NSDataENBase64.m */,
 			);
 			path = SDK;
+			sourceTree = "<group>";
+		};
+		AE8EA39222A015910033E067 /* SDWebViewController */ = {
+			isa = PBXGroup;
+			children = (
+				AE8EA39322A015910033E067 /* SDWebViewController.h */,
+				AE8EA39422A015910033E067 /* SDWebViewDelegate.h */,
+				AE8EA39522A015910033E067 /* SDWebViewController.m */,
+			);
+			path = SDWebViewController;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -129,6 +144,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				AE8EA39622A015910033E067 /* SDWebViewController.m in Sources */,
 				954FC90C20AADA700017B273 /* RNCloudPayments.m in Sources */,
 				954FC9F920AC08E60017B273 /* Card.m in Sources */,
 				954FC9FA20AC08E60017B273 /* NSDataENBase64.m in Sources */,
