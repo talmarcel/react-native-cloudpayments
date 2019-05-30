@@ -1,12 +1,11 @@
 #import "RNCloudPayments.h"
 #import "SDK/Card.m"
 
-@interface RNCloudPayments () {
-    @property (nonatomic) RCTPromiseResolveBlock resolveWebView;
-}
+//@interface RNCloudPayments () {
+//    @property (nonatomic) RCTPromiseResolveBlock resolveWebView;
+//}
 
 @implementation RNCloudPayments
-
 
 RCT_EXPORT_MODULE();
 
@@ -78,8 +77,6 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
     // Detect url
     NSString *url = request.URL;
     NSString *sringUrl = request.URL.absoluteString;
-    
-    
 }
 
 - (void)onWebViewWillClose:(UIWebView *)webView {
@@ -97,6 +94,5 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
 - (void)webViewFailToLoad:(NSError *)error {
     
 }
-
 
 @end
