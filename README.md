@@ -123,18 +123,15 @@ __Arguments__
 - `url` - `String` Url redirect.
 - `transactionId` - `String` Transaction ID.
 - `token` - `String` Token.
-- `successCallback` - `function` Call when result is success.
-- `errorCallback` - `function` Call when result is error.
 
 __Examples__
 ```js
 import RNCloudPayment from 'react-native-cloudpayments';
 
-RNCloudPayment.show3DS('https://demo.cloudpayments.ru', '1237618734', '....1d3d22r..', result => {
-    console.log(result)
-}, error => {
-    console.log(error)
-})
+RNCloudPayment.show3DS('https://demo.cloudpayments.ru', '1237618734', '....1d3d22r..')
+  .then(result => {
+    console.log(result); 
+  });
 ```
 
 # License
