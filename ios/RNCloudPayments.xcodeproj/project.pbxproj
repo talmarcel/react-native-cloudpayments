@@ -82,8 +82,8 @@
 		AE8EA39222A015910033E067 /* SDWebViewController */ = {
 			isa = PBXGroup;
 			children = (
-				AE8EA39322A015910033E067 /* SDWebViewController.h */,
 				AE8EA39422A015910033E067 /* SDWebViewDelegate.h */,
+				AE8EA39322A015910033E067 /* SDWebViewController.h */,
 				AE8EA39522A015910033E067 /* SDWebViewController.m */,
 			);
 			path = SDWebViewController;

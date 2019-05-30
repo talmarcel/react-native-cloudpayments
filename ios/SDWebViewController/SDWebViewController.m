@@ -81,7 +81,7 @@
     [self initAddressBarView];
     [self initWebView];
 
-    [self goToURL:self.m_initUrl login:self.m_transactionId password:self.m_token];
+    [self goToURL:self.m_initUrl transactionId:self.m_transactionId token:self.m_token];
 }
 
 - (void)didReceiveMemoryWarning {
