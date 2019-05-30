@@ -22,7 +22,8 @@ public class CloudPayments extends ReactContextBaseJavaModule {
   @ReactMethod
   public void isValidNumber(String cardNumber, Promise promise) {
     try {
-      boolean numberStatus = CPCard.isValidNumber(cardNumber);
+      String validFormatNumber = cardNumber.replace(" ", "");
+      boolean numberStatus = CPCard.isValidNumber(validFormatNumber);
 
       promise.resolve(numberStatus);
     } catch (Exception e) {
@@ -33,7 +34,8 @@ public class CloudPayments extends ReactContextBaseJavaModule {
   @ReactMethod
   public void isValidExpired(String cardExpired, Promise promise) {
     try {
-      boolean expiredStatus = CPCard.isValidExpDate(cardExpired);
+      String validFormatExp = cardExpired.replace("/", "");
+      boolean expiredStatus = CPCard.isValidExpDate(validFormatExp);
 
       promise.resolve(expiredStatus);
     } catch (Exception e) {
