@@ -9,16 +9,15 @@
 #define IBT_BGCOLOR             [UIColor whiteColor]
 #define IBT_ADDRESS_TEXT_COLOR  [UIColor colorWithRed:.44 green:.45  blue:.46  alpha:1]
 #define IBT_PROGRESS_COLOR      [UIColor colorWithRed:0   green:.071 blue:.75  alpha:1]
+
 #define POST_BACK_URL "https://demo.cloudpayments.ru/WebFormPost/GetWebViewData"
+
 #import "SDWebViewController.h"
 #import "SDWebViewDelegate.h"
 
-@interface SDWebViewController ()
-<
-    UIWebViewDelegate
->
-{
-    // address bar
+@interface SDWebViewController () <UIWebViewDelegate> {
+    
+    // Address bar
     UIImageView *m_addressBarView;
     UILabel *m_addressLabel;
 
@@ -81,7 +80,7 @@
     [self initAddressBarView];
     [self initWebView];
 
-    [self goToURL:self.m_initUrl transactionId:self.m_transactionId token:self.m_token];
+    [self loadURL:self.m_initUrl transactionId:self.m_transactionId token:self.m_token];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -101,7 +100,7 @@
     m_currentUrl = nil;
 }
 
-#pragma mark - Private Method
+#pragma MARK: - Private Method
 
 - (void)initWebView {
     self.m_webView = [[UIWebView alloc] initWithFrame:self.view.bounds];
@@ -116,7 +115,7 @@
     self.title = nsTitle;
 }
 
-#pragma mark - Address Bar
+#pragma MARK: - Address Bar
 
 - (NSString *)getAddressBarHostText:(NSURL *)url {
     if ([url.host length] > 0) {
@@ -156,7 +155,7 @@
     m_addressLabel = nil;
 }
 
-#pragma mark - Navigation Bar
+#pragma MARK: - Navigation Bar
 
 - (void)initNavigationBarItem {
     UIBarButtonItem *backItem =
@@ -173,7 +172,7 @@
     [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 
-#pragma mark - WebView Action
+#pragma MARK: - WebView Action
 
 - (BOOL)isTopLevelNavigation:(NSURLRequest *)req {
     if (req.mainDocumentURL) {
@@ -184,9 +183,9 @@
     }
 }
 
-- (void)goToURL:(NSString *)url transactionId:(NSString *)transactionId token:(NSString *)token {
+- (void)loadURL:(NSString *)url transactionId:(NSString *)transactionId token:(NSString *)token {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    NSString *post = [NSString stringWithFormat:@"MD=%@&PaReq=%@&TermUrl=%@", transactionId, token, POST_BACK_URL];
+    NSString *post = [NSString stringWithFormat:@"MD=%@&PaReq=%@&TermUrl=%s", transactionId, token, POST_BACK_URL];
     NSData *postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:postData];
@@ -194,7 +193,7 @@
     [self.m_webView loadRequest:request];
 }
 
-#pragma mark UIWebViewDelegate
+#pragma MARK: - UIWebViewDelegate
 
 - (BOOL)webView:(UIWebView *)webView
 shouldStartLoadWithRequest:(NSURLRequest *)request
@@ -248,6 +247,5 @@ shouldStartLoadWithRequest:(NSURLRequest *)request
     }
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
 }
-
 
 @end

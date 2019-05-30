@@ -1,9 +1,7 @@
 #import "RNCloudPayments.h"
 #import "SDK/Card.m"
-#import "SDWebViewController/SDWebViewController.h"
-#import "SDWebViewController/SDWebViewDelegate.h"
 
-@implementation RNCloudPayments <SDWebViewDelegate>
+@implementation RNCloudPayments
 
 RCT_EXPORT_MODULE();
 
@@ -37,7 +35,7 @@ RCT_EXPORT_METHOD(getType: (NSString *)cardNumber
 {
     CardType cardType = [Card cardTypeFromCardNumber: cardNumber];
     NSString *cardTypeString = [Card cardTypeToString: cardType];
-    
+
     resolve(cardTypeString);
 }
 
@@ -49,9 +47,9 @@ RCT_EXPORT_METHOD(createCryptogram: (NSString *)cardNumber
                   reject: (RCTPromiseRejectBlock)reject)
 {
     Card *_card = [[Card alloc] init];
-    
+
     NSString *cryptogram = [_card makeCardCryptogramPacket: cardNumber andExpDate:cardExp andCVV:cardCvv andMerchantPublicID:publicId];
-    
+
     resolve(cryptogram);
 }
 
