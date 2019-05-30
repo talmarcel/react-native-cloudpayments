@@ -9,7 +9,7 @@
 #define IBT_BGCOLOR             [UIColor whiteColor]
 #define IBT_ADDRESS_TEXT_COLOR  [UIColor colorWithRed:.44 green:.45  blue:.46  alpha:1]
 #define IBT_PROGRESS_COLOR      [UIColor colorWithRed:0   green:.071 blue:.75  alpha:1]
-
+#define POST_BACK_URL "https://demo.cloudpayments.ru/WebFormPost/GetWebViewData"
 #import "SDWebViewController.h"
 #import "SDWebViewDelegate.h"
 
@@ -21,17 +21,17 @@
     // address bar
     UIImageView *m_addressBarView;
     UILabel *m_addressLabel;
-    
+
     // URL
     NSURL *m_currentUrl;
-    
+
     BOOL m_bAutoSetTitle;
 }
 @property (strong, nonatomic) UIWebView *m_webView;
 
 @property (strong, nonatomic) NSString *m_initUrl;
-@property (strong, nonatomic) NSString *m_login;
-@property (strong, nonatomic) NSString *m_password;
+@property (strong, nonatomic) NSString *m_transactionId;
+@property (strong, nonatomic) NSString *m_token;
 @property (strong, nonatomic) NSMutableDictionary *m_extraInfo;
 
 - (void)initWebView;
@@ -45,43 +45,43 @@
 
 #pragma mark -
 
-- (id)initWithURL:(id)url login:(NSString *)login password:(NSString *)password {
+- (id)initWithURL:(id)url transactionId:(NSString *)transactionId token:(NSString *)token {
     self = [super init];
     if (!self) {
         return nil;
     }
-    
+
     self.m_initUrl = url;
-    self.m_login = login;
-    self.m_password = password;
-    
-    
+    self.m_transactionId = transactionId;
+    self.m_token = token;
+
+
     if ([url isKindOfClass:[NSString class]]) {
         self.m_initUrl = url;
     }
     else if ([url isKindOfClass:[NSURL class]]) {
         self.m_initUrl = [NSString stringWithFormat:@"%@", url];
     }
-    
+
     m_bAutoSetTitle = YES;
-    
+
     return self;
 }
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+
     self.view.backgroundColor = IBT_BGCOLOR;
-    
+
     if ([self respondsToSelector:@selector(setEdgesForExtendedLayout:)]) {
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
-    
+
     [self initNavigationBarItem];
     [self initAddressBarView];
     [self initWebView];
-    
-    [self goToURL:self.m_initUrl login:self.m_login password:self.m_password];
+
+    [self goToURL:self.m_initUrl login:self.m_transactionId password:self.m_token];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -94,7 +94,7 @@
     [self.m_webView stopLoading];
     [[UIApplication sharedApplication] setNetworkActivityIndicatorVisible:NO];
     self.m_webView.delegate = nil;
-    
+
     m_addressBarView = nil;
     m_addressLabel = nil;
 
@@ -136,17 +136,17 @@
             .size.width = CGRectGetWidth(self.view.bounds),
             .size.height = 40
         };
-        
+
         m_addressLabel = [[UILabel alloc] init];
         m_addressLabel.frame = CGRectInset(m_addressBarView.bounds, 10, 6);
         m_addressLabel.textColor = [UIColor clearColor];
         m_addressLabel.textAlignment = NSTextAlignmentCenter;
         m_addressLabel.textColor = IBT_ADDRESS_TEXT_COLOR;
         m_addressLabel.font = [UIFont systemFontOfSize:12];
-        
+
         [m_addressBarView addSubview:m_addressLabel];
     }
-    
+
     [self.view addSubview:m_addressBarView];
 }
 
@@ -164,9 +164,9 @@
                                      style:UIBarButtonItemStylePlain
                                     target:self
                                     action:@selector(onCloseAction:)];
-    
+
     self.navigationItem.rightBarButtonItems = @[ backItem ];
-    
+
 }
 
 - (void)onCloseAction:(__unused id)sender {
@@ -184,9 +184,9 @@
     }
 }
 
-- (void)goToURL:(NSString *)url login:(NSString *)login password:(NSString *)password {
+- (void)goToURL:(NSString *)url transactionId:(NSString *)transactionId token:(NSString *)token {
     NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    NSString *post = [NSString stringWithFormat:@"login=%@&password=%@", login, password];
+    NSString *post = [NSString stringWithFormat:@"MD=%@&PaReq=%@&TermUrl=%@", transactionId, token, POST_BACK_URL];
     NSData *postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
     [request setHTTPMethod:@"POST"];
     [request setHTTPBody:postData];

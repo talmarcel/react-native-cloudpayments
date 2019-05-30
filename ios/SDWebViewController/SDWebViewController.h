@@ -13,6 +13,6 @@
 
 @property (weak, nonatomic) id<SDWebViewDelegate> m_delegate;
 
-- (id)initWithURL:(id)url login:(NSString *)login password:(NSString *)password;
+- (id)initWithURL:(id)url transactionId:(NSString *)transactionId token:(NSString *)token;
 
 @end

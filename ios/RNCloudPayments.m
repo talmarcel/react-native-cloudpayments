@@ -52,4 +52,13 @@ RCT_EXPORT_METHOD(createCryptogram: (NSString *)cardNumber
     
     resolve(cryptogram);
 }
+
+RCT_EXPORT_METHOD(show3DS: (NSString *)url
+                  transactionId: (NSString *)transactionId
+                  token: (NSString *)token
+                  resolve: (RCTPromiseResolveBlock)resolve
+                  reject: (RCTPromiseRejectBlock)reject)
+{
+
+}
 @end
