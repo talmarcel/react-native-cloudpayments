@@ -97,15 +97,11 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
     if ([urlString isEqualToString:POST_BACK_URL]) {
         NSString *result = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
         NSString *mdString = [result stringBetweenString:@"MD=" andString:@"&PaRes"];
-        NSString *paResString = [result stringBetweenString:@"PaRes=" andString:@""];
+        NSString *paResString = [[result stringBetweenString:@"PaRes=" andString:@""] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         
         NSDictionary *dictionary = @{@"MD": mdString, @"PaRes": paResString};
         
-        NSData *data = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:nil];
-        NSString *json = [[NSString alloc] initWithData:data
-                                               encoding:NSUTF8StringEncoding];
-        
-        self.resolveWebView(json);
+        self.resolveWebView(dictionary);
         
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     }
