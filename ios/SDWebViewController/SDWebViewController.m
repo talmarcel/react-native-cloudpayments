@@ -14,6 +14,7 @@
 
 #import "SDWebViewController.h"
 #import "SDWebViewDelegate.h"
+#import "NSString+URLEncoding.h"
 
 @interface SDWebViewController () <UIWebViewDelegate> {
     
@@ -167,6 +168,10 @@
 }
 
 - (void)onCloseAction:(__unused id)sender {
+    if ([_m_delegate respondsToSelector:@selector(webViewWillClose:)]) {
+        [_m_delegate webViewWillClose:self.m_webView];
+    }
+    
     [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 
@@ -181,13 +186,12 @@
 }
 
 - (void)loadURL:(NSString *)url transactionId:(NSString *)transactionId token:(NSString *)token {
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:url]];
-    NSString *post = [NSString stringWithFormat:@"MD=%@&PaReq=%@&TermUrl=%@", transactionId, token, POST_BACK_URL];
-    NSData *postData = [post dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
-    [request setHTTPMethod:@"POST"];
-    [request setHTTPBody:postData];
-    
-    [self.m_webView loadRequest:request];
+    NSString *body = [NSString stringWithFormat: @"MD=%@&PaReq=%@&TermUrl=%@", token, transactionId, POST_BACK_URL];
+    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:[NSURL URLWithString: url]];
+    [request setHTTPMethod: @"POST"];
+    body = [body stringByURLEncoding];
+    [request setHTTPBody: [body dataUsingEncoding: NSUTF8StringEncoding]];
+    [self.m_webView loadRequest: request];
 }
 
 #pragma MARK: - UIWebViewDelegate

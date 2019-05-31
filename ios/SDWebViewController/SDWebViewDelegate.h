@@ -12,7 +12,7 @@
 
 @optional
 - (void)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (UIWebViewNavigationType)navigationType;
-- (void)onWebViewWillClose:(UIWebView *)webView;
+- (void)webViewWillClose:(UIWebView *)webView;
 - (void)onWebViewDidFinishLoad:(UIWebView *)webView;
 - (void)onWebViewDidStartLoad:(UIWebView *)webView;
 - (void)webViewFailToLoad:(NSError *)error;

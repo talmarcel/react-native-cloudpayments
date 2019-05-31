@@ -1,9 +1,22 @@
 #import "RNCloudPayments.h"
 #import "SDK/Card.m"
+#import "SDWebViewController/SDWebViewController.h"
+#import "SDWebViewController/SDWebViewDelegate.h"
+#import "NSString+URLEncoding.h"
 
-//@interface RNCloudPayments () {
-//    @property (nonatomic) RCTPromiseResolveBlock resolveWebView;
-//}
+#define POST_BACK_URL @"https://demo.cloudpayments.ru/WebFormPost/GetWebViewData"
+
+typedef void (^RCTPromiseResolveBlock)(id result);
+typedef void (^RCTPromiseRejectBlock)(NSString *code, NSString *message, NSError *error);
+
+@interface RNCloudPayments () <SDWebViewDelegate>
+
+@property (nonatomic, retain) UINavigationController *navigationController;
+
+@property (nonatomic) RCTPromiseResolveBlock resolveWebView;
+@property (nonatomic) RCTPromiseRejectBlock rejectWebView;
+
+@end
 
 @implementation RNCloudPayments
 
@@ -39,7 +52,7 @@ RCT_EXPORT_METHOD(getType: (NSString *)cardNumber
 {
     CardType cardType = [Card cardTypeFromCardNumber: cardNumber];
     NSString *cardTypeString = [Card cardTypeToString: cardType];
-
+    
     resolve(cardTypeString);
 }
 
@@ -51,9 +64,9 @@ RCT_EXPORT_METHOD(createCryptogram: (NSString *)cardNumber
                   reject: (RCTPromiseRejectBlock)reject)
 {
     Card *_card = [[Card alloc] init];
-
+    
     NSString *cryptogram = [_card makeCardCryptogramPacket: cardNumber andExpDate:cardExp andCVV:cardCvv andMerchantPublicID:publicId];
-
+    
     resolve(cryptogram);
 }
 
@@ -63,11 +76,15 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
                   resolve: (RCTPromiseResolveBlock)resolve
                   reject: (RCTPromiseRejectBlock)reject)
 {
+    self.resolveWebView = resolve;
+    self.rejectWebView = reject;
+    
+    // Show WebView
     SDWebViewController *webViewController = [[SDWebViewController alloc] initWithURL:url transactionId:transactionId token:token];
     webViewController.m_delegate = self;
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:webViewController];
-    [navigationController.navigationBar setTranslucent:false];
-    [[[[[UIApplication sharedApplication] delegate] window] rootViewController] presentViewController:navigationController animated:YES completion:NULL];
+    self.navigationController = [[UINavigationController alloc] initWithRootViewController:webViewController];
+    [self.navigationController.navigationBar setTranslucent:false];
+    [[self topViewController] presentViewController:self.navigationController animated:YES completion:nil];
 }
 
 #pragma MARK: - SDWebViewDelegate
@@ -75,24 +92,49 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
 - (void)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (UIWebViewNavigationType)navigationType {
     
     // Detect url
-    NSString *url = request.URL;
-    NSString *sringUrl = request.URL.absoluteString;
+    NSString *urlString = request.URL.absoluteString;
+    
+    if ([urlString isEqualToString:POST_BACK_URL]) {
+        NSString *result = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
+        NSString *mdString = [result stringBetweenString:@"MD=" andString:@"&PaRes"];
+        NSString *paResString = [result stringBetweenString:@"PaRes=" andString:@""];
+        
+        NSDictionary *dictionary = @{@"MD": mdString, @"PaRes": paResString};
+        
+        NSData *data = [NSJSONSerialization dataWithJSONObject:dictionary options:NSJSONWritingPrettyPrinted error:nil];
+        NSString *json = [[NSString alloc] initWithData:data
+                                               encoding:NSUTF8StringEncoding];
+        
+        self.resolveWebView(json);
+        
+        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+    }
 }
 
-- (void)onWebViewWillClose:(UIWebView *)webView {
-    
+- (void)webViewWillClose:(UIWebView *)webView {
+    self.rejectWebView(@"", @"", nil);
 }
 
-- (void)onWebViewDidFinishLoad:(UIWebView *)webView {
-    
-}
+#pragma MARK: - ViewController
 
-- (void)onWebViewDidStartLoad:(UIWebView *)webView {
+- (UIViewController *)topViewController {
+    UIViewController *baseVC = UIApplication.sharedApplication.keyWindow.rootViewController;
+    if ([baseVC isKindOfClass:[UINavigationController class]]) {
+        return ((UINavigationController *)baseVC).visibleViewController;
+    }
     
-}
-
-- (void)webViewFailToLoad:(NSError *)error {
+    if ([baseVC isKindOfClass:[UITabBarController class]]) {
+        UIViewController *selectedTVC = ((UITabBarController*)baseVC).selectedViewController;
+        if (selectedTVC) {
+            return selectedTVC;
+        }
+    }
     
+    if (baseVC.presentedViewController) {
+        return baseVC.presentedViewController;
+    }
+    
+    return baseVC;
 }
 
 @end

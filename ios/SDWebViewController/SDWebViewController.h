@@ -14,5 +14,6 @@
 @property (weak, nonatomic) id<SDWebViewDelegate> m_delegate;
 
 - (id)initWithURL:(id)url transactionId:(NSString *)transactionId token:(NSString *)token;
+- (NSString *)stringByURLEncoding;
 
 @end
