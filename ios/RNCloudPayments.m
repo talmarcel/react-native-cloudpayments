@@ -52,7 +52,7 @@ RCT_EXPORT_METHOD(getType: (NSString *)cardNumber
 {
     CardType cardType = [Card cardTypeFromCardNumber: cardNumber];
     NSString *cardTypeString = [Card cardTypeToString: cardType];
-    
+
     resolve(cardTypeString);
 }
 
@@ -64,9 +64,9 @@ RCT_EXPORT_METHOD(createCryptogram: (NSString *)cardNumber
                   reject: (RCTPromiseRejectBlock)reject)
 {
     Card *_card = [[Card alloc] init];
-    
+
     NSString *cryptogram = [_card makeCardCryptogramPacket: cardNumber andExpDate:cardExp andCVV:cardCvv andMerchantPublicID:publicId];
-    
+
     resolve(cryptogram);
 }
 
@@ -78,31 +78,33 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
 {
     self.resolveWebView = resolve;
     self.rejectWebView = reject;
-    
+
     // Show WebView
     SDWebViewController *webViewController = [[SDWebViewController alloc] initWithURL:url transactionId:transactionId token:token];
     webViewController.m_delegate = self;
     self.navigationController = [[UINavigationController alloc] initWithRootViewController:webViewController];
-    [self.navigationController.navigationBar setTranslucent:false];
-    [[self topViewController] presentViewController:self.navigationController animated:YES completion:nil];
+    dispatch_sync(dispatch_get_main_queue(), ^{
+        [self.navigationController.navigationBar setTranslucent:false];
+        [[self topViewController] presentViewController:self.navigationController animated:YES completion:nil];
+    });
 }
 
 #pragma MARK: - SDWebViewDelegate
 
 - (void)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (UIWebViewNavigationType)navigationType {
-    
+
     // Detect url
     NSString *urlString = request.URL.absoluteString;
-    
+
     if ([urlString isEqualToString:POST_BACK_URL]) {
         NSString *result = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
         NSString *mdString = [result stringBetweenString:@"MD=" andString:@"&PaRes"];
         NSString *paResString = [[result stringBetweenString:@"PaRes=" andString:@""] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        
+
         NSDictionary *dictionary = @{@"MD": mdString, @"PaRes": paResString};
-        
+
         self.resolveWebView(dictionary);
-        
+
         [self.navigationController dismissViewControllerAnimated:YES completion:nil];
     }
 }
@@ -118,18 +120,18 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
     if ([baseVC isKindOfClass:[UINavigationController class]]) {
         return ((UINavigationController *)baseVC).visibleViewController;
     }
-    
+
     if ([baseVC isKindOfClass:[UITabBarController class]]) {
         UIViewController *selectedTVC = ((UITabBarController*)baseVC).selectedViewController;
         if (selectedTVC) {
             return selectedTVC;
         }
     }
-    
+
     if (baseVC.presentedViewController) {
         return baseVC.presentedViewController;
     }
-    
+
     return baseVC;
 }
 
