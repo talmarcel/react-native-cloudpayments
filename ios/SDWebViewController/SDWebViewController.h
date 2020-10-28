@@ -7,6 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <WebKit/WebKit.h>
 
 @protocol SDWebViewDelegate;
 @interface SDWebViewController : UIViewController

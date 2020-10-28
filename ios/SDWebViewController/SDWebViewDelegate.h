@@ -7,14 +7,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <WebKit/WebKit.h>
 
 @protocol SDWebViewDelegate <NSObject>
 
 @optional
-- (void)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (UIWebViewNavigationType)navigationType;
-- (void)webViewWillClose:(UIWebView *)webView;
-- (void)onWebViewDidFinishLoad:(UIWebView *)webView;
-- (void)onWebViewDidStartLoad:(UIWebView *)webView;
+- (void)webView:(WKWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (WKNavigationType)navigationType;
+- (void)webViewWillClose:(WKWebView *)webView;
+- (void)onWebViewDidFinishLoad:(WKWebView *)webView;
+- (void)onWebViewDidStartLoad:(WKWebView *)webView;
 - (void)webViewFailToLoad:(NSError *)error;
 
 @end
