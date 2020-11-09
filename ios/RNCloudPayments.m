@@ -100,7 +100,7 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
     if ([urlString isEqualToString:POST_BACK_URL]) {
         NSString *result = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
         NSString *mdString = [result stringBetweenString:@"MD=" andString:@"&PaRes"];
-        NSString *paResString = [[result stringBetweenString:@"PaRes=" andString:@""] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSString *paResString = [[result stringBetweenString:@"PaRes=" andString:@"&MD"] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
         NSDictionary *dictionary = @{@"MD": mdString, @"PaRes": paResString};
 
