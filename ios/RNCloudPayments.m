@@ -91,22 +91,58 @@ RCT_EXPORT_METHOD(show3DS: (NSString *)url
 
 #pragma MARK: - SDWebViewDelegate
 
-- (void)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (UIWebViewNavigationType)navigationType {
+//- (void)webView:(UIWebView *)webView shouldStartLoadWithRequest:(NSURLRequest *)request navigationType: (UIWebViewNavigationType)navigationType {
+//
+//    // Detect url
+//    NSString *urlString = request.URL.absoluteString;
+//
+//
+//    if ([urlString isEqualToString:POST_BACK_URL]) {
+//        NSString *result = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
+//        NSLog(@"WEB RESULT: %@", result);
+//        NSString *mdString = [result stringBetweenString:@"MD=" andString:@"&PaRes"];
+//        NSString *paResString = [[result stringBetweenString:@"PaRes=" andString:@"&MD"] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//
+//        NSDictionary *dictionary = @{@"MD": mdString, @"PaRes": paResString};
+//
+//        self.resolveWebView(dictionary);
+//
+//        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//    }
+//}
 
-    // Detect url
-    NSString *urlString = request.URL.absoluteString;
+- (void)webView:(WKWebView *)webView didFinishNavigation:(WKNavigation *)navigation {
 
-    
-    if ([urlString isEqualToString:POST_BACK_URL]) {
-        NSString *result = [[NSString alloc] initWithData:request.HTTPBody encoding:NSUTF8StringEncoding];
-        NSString *mdString = [result stringBetweenString:@"MD=" andString:@"&PaRes"];
-        NSString *paResString = [[result stringBetweenString:@"PaRes=" andString:@"&MD"] stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL *url = webView.URL;
+    if ([url.absoluteString isEqualToString:POST_BACK_URL]) {
+        [webView evaluateJavaScript:@"document.documentElement.outerHTML.toString()" completionHandler:^(NSString *_Nullable result, NSError * _Nullable error) {
+            NSString *str = result;
+//            NSLog(@"WEB RESULT: %@", result);
+            do {
+                NSRange startRange = [str rangeOfString:@"{"];
+                if (startRange.location == NSNotFound) {
+                    break;
+                }
+                str = [str substringFromIndex:startRange.location];
+                NSRange endRange = [str rangeOfString:@"}"];
+                if (endRange.location == NSNotFound) {
+                    break;
+                }
+                str = [str substringToIndex:endRange.location + 1];
+                NSDictionary *dict = [NSJSONSerialization JSONObjectWithData:[str dataUsingEncoding:NSUTF8StringEncoding] options:0 error:NULL];
 
-        NSDictionary *dictionary = @{@"MD": mdString, @"PaRes": paResString};
+                NSDictionary *dictionary = @{@"MD": dict[@"MD"], @"PaRes": dict[@"PaRes"]};
 
-        self.resolveWebView(dictionary);
+                self.resolveWebView(dictionary);
 
-        [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+                [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//                [webView removeFromSuperview];
+                return;
+            } while(NO);
+            self.rejectWebView(@"", str, nil);
+            [self.navigationController dismissViewControllerAnimated:YES completion:nil];
+//            [webView removeFromSuperview];
+        }];
     }
 }
 
