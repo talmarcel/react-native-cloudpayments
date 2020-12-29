@@ -223,6 +223,10 @@
 }
 
 - (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation{
+    if ([_m_delegate respondsToSelector:@selector(webView:didFinishNavigation:)]) {
+        [_m_delegate webView:webView didFinishNavigation:navigation];
+    }
+    
     [self makeRequest];
 }
 
