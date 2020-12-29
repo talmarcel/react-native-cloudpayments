@@ -17,5 +17,6 @@
 - (void)onWebViewDidFinishLoad:(WKWebView *)webView;
 - (void)onWebViewDidStartLoad:(WKWebView *)webView;
 - (void)webViewFailToLoad:(NSError *)error;
+- (void)webView:(WKWebView *)webView didFinishNavigation:(null_unspecified WKNavigation *)navigation;
 
 @end
