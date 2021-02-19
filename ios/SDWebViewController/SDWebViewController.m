@@ -172,6 +172,9 @@
 }
 
 - (void)onCloseAction:(__unused id)sender {
+    if ([_m_delegate respondsToSelector:@selector(webViewWillClose:)]) {
+            [_m_delegate webViewWillClose:self.m_webView];
+    }
     [self.presentingViewController dismissViewControllerAnimated:YES completion:NULL];
 }
 
