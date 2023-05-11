@@ -78,6 +78,10 @@
         self.edgesForExtendedLayout = UIRectEdgeNone;
     }
     
+    // fix transparent background after ios 16
+    UINavigationBar *bar = [self.navigationController navigationBar];
+    [bar setBackgroundColor:[UIColor colorWithRed:(247.0f/255.0f) green:(247.0f/255.0f) blue:(247.0f/255.0f) alpha:1]];
+    
     [self initNavigationBarItem];
     [self initAddressBarView];
     [self initWebView];
